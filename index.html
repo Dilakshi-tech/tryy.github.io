@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="tool" name="artifact-type"/>
+  <meta content="haven" name="design-style"/>
+  <title>
+   Lingo Mate — Your Foreign Language Learning Companion
+  </title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&amp;family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;500;600&amp;family=Noto+Sans+Tamil:wght@400;500;600&amp;family=Noto+Sans+JP:wght@400;500;600&amp;family=Noto+Sans+KR:wght@400;500;600&amp;family=Noto+Sans+SC:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.9.17/build/Tone.js">
+  </script>
+  <link href="styles.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="page-shell">
+   <!-- Masthead -->
+   <header class="masthead">
+    <div>
+     <div class="brand-kicker">
+      <span class="brand-pill">
+       <i aria-hidden="true" data-lucide="compass" style="width:14px;height:14px;">
+       </i>
+       <span id="ui-brand-badge">
+        Lingo Mate · Sri Lanka
+       </span>
+      </span>
+      <span class="tag tag-slate" id="ui-account-tag">
+       Single-account access · 5 languages
+      </span>
+     </div>
+     <h1 class="headline display-title" id="ui-main-title">
+      Lingo Mate — your foreign language
+      <strong>
+       learning companion
+      </strong>
+     </h1>
+     <p class="caption-sage prose-limit" id="ui-tagline">
+      Structured GCE O/L, GCE A/L, and independent pathways with Sinhala, Tamil, and English guidance.
+     </p>
+    </div>
+    <div class="global-controls">
+     <div class="control-group">
+      <label class="label" for="support-lang-select" id="lbl-support-lang">
+       Explanation &amp; gloss language
+      </label>
+      <select id="support-lang-select" onchange="setSupportLang(this.value)">
+       <option value="en">
+        English (UK) — Default
+       </option>
+       <option value="si">
+        සිංහල (Sinhala explanations)
+       </option>
+       <option value="ta">
+        தமிழ் (Tamil explanations)
+       </option>
+      </select>
+     </div>
+     <div class="control-group">
+      <label class="label" for="pathway-select" id="lbl-pathway">
+       Study pathway &amp; level
+      </label>
+      <select id="pathway-select" onchange="setPathway(this.value)">
+       <option value="ol">
+        GCE O/L Pathway (Grades 10–11)
+       </option>
+       <option value="al">
+        GCE A/L Pathway (Grades 12–13)
+       </option>
+       <option value="ind-beg">
+        Independent — Absolute Beginner (A1)
+       </option>
+       <option value="ind-int">
+        Independent — Intermediate (B1–B2)
+       </option>
+       <option value="ind-adv">
+        Independent — Advanced / Professional (C1)
+       </option>
+      </select>
+     </div>
+    </div>
+   </header>
+   <!-- Single-Account 5-Language Strip -->
+   <section aria-label="Target language selection">
+    <div class="lang-strip" id="lang-strip">
+    </div>
+   </section>
+   <!-- KPI Progress Summary Strip -->
+   <section aria-label="Learner progress overview" class="kpi-grid">
+    <div class="kpi-card">
+     <span class="label" id="kpi-lbl-xp">
+      Account progress
+     </span>
+     <div class="kpi-value tabular" id="kpi-xp-val">
+      0 XP · Novice
+     </div>
+     <div class="caption-sage" id="kpi-xp-sub">
+      Complete any activity to earn XP
+     </div>
+    </div>
+    <div class="kpi-card">
+     <span class="label" id="kpi-lbl-streak">
+      Daily study streak
+     </span>
+     <div class="kpi-value tabular" id="kpi-streak-val">
+      0 days
+     </div>
+     <div class="caption-sage" id="kpi-streak-sub">
+      Today: ready to check in
+     </div>
+    </div>
+    <div class="kpi-card">
+     <span class="label" id="kpi-lbl-mastery">
+      Active language mastery
+     </span>
+     <div class="kpi-value tabular" id="kpi-mastery-val">
+      0%
+     </div>
+     <div class="progress-track">
+      <div class="progress-fill progress-fill-sage" id="kpi-mastery-bar" style="width:0%">
+      </div>
+     </div>
+     <div class="caption-sage" id="kpi-mastery-sub">
+      0 of 6 skill areas practised
+     </div>
+    </div>
+    <div class="kpi-card">
+     <span class="label" id="kpi-lbl-exam">
+      Exam readiness
+     </span>
+     <div class="kpi-value tabular" id="kpi-exam-val">
+      —
+     </div>
+     <div class="caption-sage" id="kpi-exam-sub">
+      Take a diagnostic quiz in Exam Prep
+     </div>
+    </div>
+   </section>
+   <!-- Seamless Workspace Navigation + Quick Actions -->
+   <nav aria-label="Primary workspaces" class="nav-bar">
+    <div class="nav-tabs" role="tablist">
+     <button class="nav-tab is-active" data-view="studio" id="tab-studio" onclick="switchView('studio')" type="button">
+      <i aria-hidden="true" data-lucide="book-open" style="width:16px;height:16px;">
+      </i>
+      <span id="nav-txt-studio">
+       Learning Studio
+      </span>
+     </button>
+     <button class="nav-tab" data-view="exam" id="tab-exam" onclick="switchView('exam')" type="button">
+      <i aria-hidden="true" data-lucide="award" style="width:16px;height:16px;">
+      </i>
+      <span id="nav-txt-exam">
+       Exam Preparation
+      </span>
+     </button>
+     <button class="nav-tab" data-view="planner" id="tab-planner" onclick="switchView('planner')" type="button">
+      <i aria-hidden="true" data-lucide="calendar-check" style="width:16px;height:16px;">
+      </i>
+      <span id="nav-txt-planner">
+       Study Plan
+      </span>
+     </button>
+     <button class="nav-tab" data-view="community" id="tab-community" onclick="switchView('community')" type="button">
+      <i aria-hidden="true" data-lucide="users" style="width:16px;height:16px;">
+      </i>
+      <span id="nav-txt-community">
+       Resources &amp; Community
+      </span>
+     </button>
+    </div>
+    <div class="btn-row">
+     <button class="btn btn-subtle btn-sm" onclick="loadSamplePreset()" type="button">
+      <i aria-hidden="true" data-lucide="sparkles" style="width:14px;height:14px;">
+      </i>
+      <span id="btn-sample-lbl">
+       Load sample O/L progress
+      </span>
+     </button>
+     <button class="btn btn-secondary btn-sm" onclick="exportProgressReport()" type="button">
+      <i aria-hidden="true" data-lucide="download" style="width:14px;height:14px;">
+      </i>
+      <span id="btn-export-lbl">
+       Export summary
+      </span>
+     </button>
+     <button class="btn btn-secondary btn-sm" id="btn-reset-all" onclick="handleResetAll(this)" type="button">
+      <i aria-hidden="true" data-lucide="rotate-ccw" style="width:14px;height:14px;">
+      </i>
+      <span>
+       Reset
+      </span>
+     </button>
+    </div>
+   </nav>
+   <!-- Status Notice Area -->
+   <div aria-live="polite" class="feedback-box is-info" id="global-status" role="status" style="display:none;">
+   </div>
+   <!-- ===================================================== -->
+   <!-- WORKSPACE 1: LEARNING STUDIO (ALL 6 SKILLS)           -->
+   <!-- ===================================================== -->
+   <section aria-label="Learning Studio" class="workspace-view is-active" id="view-studio">
+    <div class="panel">
+     <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:var(--space-md);">
+      <div>
+       <span class="label" id="studio-kicker">
+        Six-skill interactive studio
+       </span>
+       <h2 class="headline section-title" id="studio-heading">
+        French
+        <strong>
+         core skills
+        </strong>
+       </h2>
+      </div>
+      <div aria-label="Skill areas" class="skill-pills" role="tablist">
+       <button class="skill-pill is-active" data-skill="vocab" onclick="switchSkill('vocab')" type="button">
+        Vocabulary
+       </button>
+       <button class="skill-pill" data-skill="grammar" onclick="switchSkill('grammar')" type="button">
+        Grammar
+       </button>
+       <button class="skill-pill" data-skill="reading" onclick="switchSkill('reading')" type="button">
+        Reading
+       </button>
+       <button class="skill-pill" data-skill="writing" onclick="switchSkill('writing')" type="button">
+        Writing
+       </button>
+       <button class="skill-pill" data-skill="listening" onclick="switchSkill('listening')" type="button">
+        Listening
+       </button>
+       <button class="skill-pill" data-skill="speaking" onclick="switchSkill('speaking')" type="button">
+        Speaking
+       </button>
+      </div>
+     </div>
+    </div>
+    <div class="workspace-grid">
+     <!-- Main Interactive Skill Canvas -->
+     <div class="panel card-wrapper" id="skill-main-panel">
+      <div id="skill-panel-vocab">
+      </div>
+      <div id="skill-panel-grammar" style="display:none;">
+       <div id="grammar-dynamic">
+       </div>
+       <div class="feedback-box" id="grammar-feedback" style="display:none; margin-top:var(--space-md);">
+       </div>
+      </div>
+      <div id="skill-panel-reading" style="display:none;">
+       <div id="reading-dynamic">
+       </div>
+       <div class="feedback-box" id="reading-feedback" style="display:none; margin-top:var(--space-sm);">
+       </div>
+      </div>
+      <div id="skill-panel-writing" style="display:none;">
+       <div style="display:grid; gap:var(--space-md);">
+        <div id="writing-dynamic">
+        </div>
+        <div id="writing-canvas-section" style="display:none; gap:var(--space-sm);">
+         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--space-sm);">
+          <span class="label" id="writing-trace-label">
+           Character pad
+          </span>
+          <div class="btn-row">
+           <button class="btn btn-secondary btn-sm" onclick="clearWritingCanvas()" type="button">
+            Clear pad
+           </button>
+           <button class="btn btn-secondary btn-sm" onclick="nextTraceChar()" type="button">
+            Next character
+           </button>
+          </div>
+         </div>
+         <div class="canvas-wrap">
+          <canvas aria-label="Character drawing pad" id="writing-canvas">
+          </canvas>
+         </div>
+        </div>
+        <div id="writing-accents-section" style="display:none;">
+         <span class="label" style="margin-bottom:var(--space-xs);">
+          Insert accented characters
+         </span>
+         <div class="btn-row" id="writing-accents-keys">
+         </div>
+        </div>
+        <div class="control-group">
+         <label class="label" for="writing-response" id="writing-response-lbl">
+          Write your sentence(s)
+         </label>
+         <textarea id="writing-response" placeholder="Type your response here…"></textarea>
+        </div>
+        <div class="btn-row">
+         <button class="btn btn-primary" onclick="evaluateWriting()" type="button">
+          <i aria-hidden="true" data-lucide="check-circle" style="width:16px;height:16px;">
+          </i>
+          <span>
+           Check response (+20 XP)
+          </span>
+         </button>
+         <button class="btn btn-secondary" onclick="fillModelWriting()" type="button">
+          Show model answer
+         </button>
+        </div>
+        <div class="feedback-box" id="writing-feedback" style="display:none;">
+        </div>
+       </div>
+      </div>
+      <div id="skill-panel-listening" style="display:none;">
+       <div style="display:grid; gap:var(--space-md);">
+        <div id="listen-header">
+        </div>
+        <div class="target-phrase-box" id="listen-player-box">
+         <span class="label">
+          Audio prompt
+         </span>
+         <div class="btn-row">
+          <button class="btn btn-primary" onclick="playListenAudio(1.0)" type="button">
+           <i aria-hidden="true" data-lucide="play" style="width:16px;height:16px;">
+           </i>
+           <span>
+            Play natural speed
+           </span>
+          </button>
+          <button class="btn btn-secondary" id="listen-slow-btn" onclick="playListenAudio(0.75)" type="button">
+           <span>
+            Slow 0.75×
+           </span>
+          </button>
+          <button class="btn btn-secondary" onclick="toggleTranscript()" type="button">
+           <span>
+            Show / hide transcript
+           </span>
+          </button>
+         </div>
+         <div id="listen-transcript" style="display:none; margin-top:var(--space-sm);">
+         </div>
+        </div>
+        <div id="listen-question-area">
+        </div>
+        <div class="feedback-box" id="listen-feedback" style="display:none; margin-top:var(--space-sm);">
+        </div>
+       </div>
+      </div>
+      <div id="skill-panel-speaking" style="display:none;">
+       <div style="display:grid; gap:var(--space-md);">
+        <div id="speaking-dynamic">
+        </div>
+        <div class="feedback-box" id="speaking-feedback" style="display:none;">
+        </div>
+       </div>
+      </div>
+     </div>
+     <!-- Contextual Companion Sidebar -->
+     <aside class="panel" id="skill-companion-panel">
+     </aside>
+    </div>
+   </section>
+   <!-- ===================================================== -->
+   <!-- WORKSPACE 2: EXAM PREPARATION (O/L, A/L & INTL)       -->
+   <!-- ===================================================== -->
+   <section aria-label="Exam Preparation" class="workspace-view" id="view-exam">
+    <div class="workspace-grid">
+     <!-- Adaptive Assessment Engine -->
+     <div class="panel" id="exam-quiz-panel">
+     </div>
+     <!-- Curriculum Blueprint & International Equivalents -->
+     <div class="panel" id="exam-blueprint-panel">
+     </div>
+    </div>
+   </section>
+   <!-- ===================================================== -->
+   <!-- WORKSPACE 3: PERSONALISED STUDY PLAN & GAMIFICATION   -->
+   <!-- ===================================================== -->
+   <section aria-label="Personalised Study Plan" class="workspace-view" id="view-planner">
+    <div class="workspace-grid">
+     <div class="panel" id="planner-builder-panel">
+     </div>
+     <div class="panel" id="planner-analytics-panel">
+     </div>
+    </div>
+    <div class="panel" id="badges-panel">
+    </div>
+   </section>
+   <!-- ===================================================== -->
+   <!-- WORKSPACE 4: RESOURCES & LEARNING COMMUNITY           -->
+   <!-- ===================================================== -->
+   <section aria-label="Resources and Learning Community" class="workspace-view" id="view-community">
+    <div class="workspace-grid">
+     <div class="panel" id="resource-studio-panel">
+      <div style="display:grid; gap:var(--space-md);">
+       <div>
+        <span class="label">
+         Create, upload &amp; share study materials
+        </span>
+        <h2 class="headline section-title">
+         Resource
+         <strong>
+          studio
+         </strong>
+        </h2>
+       </div>
+       <div class="control-group">
+        <label class="label" for="res-title">
+         Study pack title
+        </label>
+        <input id="res-title" placeholder="e.g., Grade 11 French Past Tense Verbs" type="text"/>
+       </div>
+       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:var(--space-md);">
+        <div class="control-group">
+         <label class="label" for="res-lang">
+          Language
+         </label>
+         <select id="res-lang">
+          <option value="fr">
+           French
+          </option>
+          <option value="de">
+           German
+          </option>
+          <option value="ja">
+           Japanese
+          </option>
+          <option value="ko">
+           Korean
+          </option>
+          <option value="zh">
+           Chinese (Mandarin)
+          </option>
+         </select>
+        </div>
+        <div class="control-group">
+         <label class="label" for="res-pathway">
+          Curriculum / exam tag
+         </label>
+         <input id="res-pathway" type="text" value="GCE O/L"/>
+        </div>
+       </div>
+       <div class="control-group">
+        <label class="label" for="res-items">
+         Vocabulary or grammar notes (one entry per line)
+        </label>
+        <textarea id="res-items" placeholder="Bonjour — Good morning / ආයුබෝවන් / வணக்கம்
+Merci — Thank you / ස්තූතියි / நன்றி"></textarea>
+       </div>
+       <div class="btn-row">
+        <button class="btn btn-primary" onclick="createCustomResource()" type="button">
+         <i aria-hidden="true" data-lucide="plus" style="width:16px;height:16px;">
+         </i>
+         <span>
+          Publish study pack (+25 XP)
+         </span>
+        </button>
+        <label class="btn btn-secondary" for="res-file-upload" style="cursor:pointer;">
+         <i aria-hidden="true" data-lucide="upload" style="width:16px;height:16px;">
+         </i>
+         <span>
+          Import .txt / .csv / .json
+         </span>
+        </label>
+        <input accept=".txt,.csv,.json" id="res-file-upload" onchange="handleResourceUpload(this)" style="display:none;" type="file"/>
+       </div>
+       <div class="feedback-box" id="res-form-msg" style="display:none;">
+       </div>
+      </div>
+     </div>
+     <div class="panel" id="community-hub-panel">
+      <div style="display:grid; gap:var(--space-md);">
+       <div>
+        <span class="label">
+         Peer learning network
+        </span>
+        <h3 class="panel-title">
+         Sri Lankan study community
+        </h3>
+       </div>
+       <div class="control-group">
+        <label class="label" for="comm-title">
+         Ask a question or share a study tip
+        </label>
+        <input id="comm-title" placeholder="Topic title (e.g., Tip for remembering German genders)" type="text"/>
+       </div>
+       <div class="control-group">
+        <label class="label" for="comm-body">
+         Your note or question
+        </label>
+        <textarea id="comm-body" placeholder="Explain clearly in English, Sinhala, or Tamil…"></textarea>
+       </div>
+       <div class="btn-row">
+        <button class="btn btn-primary btn-sm" onclick="postCommunityThread()" type="button">
+         Post to community (+15 XP)
+        </button>
+       </div>
+       <div class="sub-divider" id="community-threads-list">
+       </div>
+      </div>
+     </div>
+    </div>
+    <div class="panel" id="resource-library-panel">
+    </div>
+   </section>
+   <!-- Grounded Sources & Pedagogical Footer -->
+   <footer class="site-footer">
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:var(--space-md);">
+     <div>
+      <strong style="color:var(--on-surface); font-weight:500;">
+       Lingo Mate
+      </strong>
+      · Designed for Sri Lankan school and independent language learners.
+     </div>
+     <div class="label">
+      All progress persists automatically within your session account.
+     </div>
+    </div>
+    <div class="prose-limit">
+     Pedagogical design grounded in Sri Lanka GCE O/L examination structures (Department of Examinations / TeachMore), mobile language learning design guidelines (Jamaldeen, Hewagamage &amp; Ekanayaka, University of Colombo School of Computing, 2018), CALL/MALL adaptive and explanatory feedback research (Heil et al., 2016), inclusive multimodal app architecture (Nadaf et al.), and systematic digital learning material development (Nguyen &amp; Pham, 2025).
+    </div>
+   </footer>
+  </div>
+  <api-shim>
+  </api-shim>
+  <script src="script.js">
+  </script>
+ </body>
+</html>
